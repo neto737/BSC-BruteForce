@@ -88,6 +88,14 @@ class Hunter:
 
         send = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
 
+        f = open(send.hex() + '.txt', 'w+')
+        # ETH -> ChainId 1
+        # BSC -> ChainId 56
+        # POLYGON -> ChainId 137
+        f.write('Chain Id: ' + w3.chainId)
+        f.write('Transaction hash: ' + send.hex())
+        f.close()
+
         logging.info('Transaction hash: %s', send.hex())
 
 
