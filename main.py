@@ -15,7 +15,7 @@ class Hunter:
 
         self.config.read('conf.ini')
 
-        self.address = self.config['settings']['address']
+        self.address = Web3.toChecksumAddress(self.config['settings']['address'])
 
         if self.config.getboolean('settings', 'useETH'):
             self.w3eth = self.connect(self.config['provider']['eth'])
@@ -102,7 +102,7 @@ class Hunter:
         value = txn['value'] - maxUsedGas
 
         logging.info('Max transaction cost: %s', str(maxUsedGas))
-        return gas, value
+        return gas, int(value)
 
 
     def connect(self, provider):
