@@ -45,29 +45,66 @@ class Hunter:
         n = 1
 
         while True:
+            # Generate Private Key
             private_key = '0x' + secrets.token_hex(32)
+
+            # Get Public Key from Private Key
             public_key = Account.from_key(private_key).address
 
             if self.config.getboolean('settings', 'useETH'):
-                ethBalance = self.w3eth.eth.get_balance(public_key)
-                if ethBalance:
-                    print('Found balance in ETH network')
-                    self.send(self.w3eth, ethBalance, public_key, private_key)
+                try:
+                    # Check balance in ETH network
+                    ethBalance = self.w3eth.eth.get_balance(public_key)
+                    if ethBalance:
+                        logging.info('Found balance in ETH network')
+                        # If balance is greater than zero, write a log
+                        self.writeLog('ETH', public_key, private_key)
+
+                        if self.config.getboolean('settings', 'sendWhenFind'):
+                            self.send(self.w3eth, ethBalance, public_key, private_key)
+                except Exception as e:
+                    logging.exception(e)
             
             if self.config.getboolean('settings', 'useBSC'):
-                bscBalance = self.w3bsc.eth.get_balance(public_key)
-                if bscBalance:
-                    print('Found balance in BSC network')
-                    self.send(self.w3bsc, bscBalance, public_key, private_key)
+                try:
+                    # Check balance in BSC network
+                    bscBalance = self.w3bsc.eth.get_balance(public_key)
+                    if bscBalance:
+                        logging.info('Found balance in BSC network')
+                        # If balance is greater than zero, write a log
+                        self.writeLog('BSC', public_key, private_key)
+
+                        if self.config.getboolean('settings', 'sendWhenFind'):
+                            self.send(self.w3bsc, bscBalance, public_key, private_key)
+                except Exception as e:
+                    logging.exception(e)
             
             if self.config.getboolean('settings', 'usePOLYGON'):
-                mtcBalance = self.w3mtc.eth.get_balance(public_key)
-                if mtcBalance:
-                    print('Found balance in POLYGON network')
-                    self.send(self.w3mtc, mtcBalance, public_key, private_key)
+                try:
+                    # Check balance in POLYGON network
+                    mtcBalance = self.w3mtc.eth.get_balance(public_key)
+                    if mtcBalance:
+                        logging.info('Found balance in POLYGON network')
+                        # If balance is greater than zero, write a log
+                        self.writeLog('POLYGON', public_key, private_key)
+
+                        if self.config.getboolean('settings', 'sendWhenFind'):
+                            self.send(self.w3mtc, mtcBalance, public_key, private_key)
+                except Exception as e:
+                    logging.exception(e)
 
             logging.info('Wallets checked: %s', str(n))
             n += 1
+
+
+    def writeLog(network, privkey, pubkey):
+        try:
+            f = open('./logs/' + network + '-' + pubkey + '.txt', 'w+')
+            f.write('Public key: ' + pubkey + '\n')
+            f.write('Private key: ' + privkey + '\n')
+            f.close()
+        except Exception as e:
+            logging.exception(e)
 
 
     def send(self, w3, amount, pubkey, privkey):
@@ -87,14 +124,6 @@ class Hunter:
         signed_txn = w3.eth.account.sign_transaction(txn, privkey)
 
         send = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-
-        f = open(send.hex() + '.txt', 'w+')
-        # ETH -> ChainId 1
-        # BSC -> ChainId 56
-        # POLYGON -> ChainId 137
-        f.write('Chain Id: ' + w3.chainId)
-        f.write('Transaction hash: ' + send.hex())
-        f.close()
 
         logging.info('Transaction hash: %s', send.hex())
 
