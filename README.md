@@ -7,16 +7,19 @@ Change the settings in the conf.ini file
 [settings]
 
 # Your address here
-address 	= YOUR ADDRESS HERE
+address 	    = YOUR ADDRESS HERE
+
+# Send balance to your address when find something
+sendWhenFind    = true
 
 # Check addresses in ETH network?
-useETH 		= true
+useETH 		    = true
 
 # Check addresses in BSC network?
-useBSC 		= true
+useBSC 		    = true
 
 # Check addresses in POLYGON network?
-usePOLYGON 	= true
+usePOLYGON 	    = true
 ```
 
 Execute the script
