@@ -97,7 +97,7 @@ class Hunter:
             n += 1
 
 
-    def writeLog(network, privkey, pubkey):
+    def writeLog(self, network, pubkey, privkey):
         try:
             f = open('./logs/' + network + '-' + pubkey + '.txt', 'w+')
             f.write('Public key: ' + pubkey + '\n')
