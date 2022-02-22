@@ -10,7 +10,7 @@ Change the settings in the conf.ini file
 address 	    = YOUR ADDRESS HERE
 
 # Send balance to your address when find something
-sendWhenFind    = true
+sendWhenFind    = false
 
 # Check addresses in ETH network?
 useETH 		    = true

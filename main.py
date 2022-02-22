@@ -111,7 +111,7 @@ class Hunter:
         txn = {
             'from': Web3.toChecksumAddress(pubkey),
             'to': Web3.toChecksumAddress(self.address),
-            'gasPrice': Web3.fromWei(w3.eth.gas_price, 'gwei'),
+            'gasPrice': int(Web3.fromWei(w3.eth.gas_price, 'gwei')),
             'gas': 250000,
             'value': amount,
             'nonce': w3.eth.get_transaction_count(pubkey)
@@ -139,7 +139,7 @@ class Hunter:
         value = txn['value'] - maxUsedGas
 
         logging.info('Max transaction cost: %s', str(maxUsedGas))
-        return gas, int(value)
+        return int(gas), int(value)
 
 
     def connect(self, provider):
