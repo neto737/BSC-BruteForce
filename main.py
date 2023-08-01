@@ -15,25 +15,25 @@ class Hunter:
 
         self.config.read('conf.ini')
 
-        self.address = Web3.toChecksumAddress(self.config['settings']['address'])
+        if self.config['settings']['address']:
+            self.address = Web3.to_checksum_address(self.config['settings']['address'])
 
         if self.config.getboolean('settings', 'useETH'):
             self.w3eth = self.connect(self.config['provider']['eth'])
 
-            if self.w3eth.isConnected():
+            if self.w3eth.is_connected():
                 logging.info('Connected to ETH node')
 
         if self.config.getboolean('settings', 'useBSC'):
             self.w3bsc = self.connect(self.config['provider']['bsc'])
 
-            if self.w3bsc.isConnected():
+            if self.w3bsc.is_connected():
                 logging.info('Connected to BSC node')
-
 
         if self.config.getboolean('settings', 'usePOLYGON'):
             self.w3mtc = self.connect(self.config['provider']['polygon'])
 
-            if self.w3mtc.isConnected():
+            if self.w3mtc.is_connected():
                 logging.info('Connected to POLYGON node')
 
         logging.info('Starting to hunt a rich wallet, wish me luck...')
@@ -109,9 +109,9 @@ class Hunter:
 
     def send(self, w3, amount, pubkey, privkey):
         txn = {
-            'from': Web3.toChecksumAddress(pubkey),
-            'to': Web3.toChecksumAddress(self.address),
-            'gasPrice': int(Web3.fromWei(w3.eth.gas_price, 'gwei')),
+            'from': Web3.to_checksum_address(pubkey),
+            'to': Web3.to_checksum_address(self.address),
+            'gasPrice': int(Web3.from_wei(w3.eth.gas_price, 'gwei')),
             'gas': 250000,
             'value': amount,
             'nonce': w3.eth.get_transaction_count(pubkey)
@@ -129,13 +129,13 @@ class Hunter:
 
 
     def estimateGas(self, w3, txn):
-        gas = w3.eth.estimateGas({
+        gas = w3.eth.estimate_gas({
             'from': txn['from'],
             'to': txn['to'],
             'value': txn['value']
         })
 
-        maxUsedGas = Web3.fromWei(gas * Web3.toWei(txn['gasPrice'], 'gwei'), 'ether')
+        maxUsedGas = Web3.from_wei(gas * Web3.to_wei(txn['gasPrice'], 'gwei'), 'ether')
         value = txn['value'] - maxUsedGas
 
         logging.info('Max transaction cost: %s', str(maxUsedGas))
